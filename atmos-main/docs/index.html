@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Atmos — Documentation</title>
+  <meta name="description" content="Official documentation for Atmos, a beautiful weather app powered by Open-Meteo." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://useatmos.me/docs" />
+  <meta property="og:title" content="Atmos — Documentation" />
+  <meta property="og:description" content="Official documentation for Atmos, a beautiful weather app powered by Open-Meteo. Learn how to install, use, and contribute." />
+  <meta property="og:image" content="https://useatmos.me/src/assets/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Atmos — Documentation" />
+  <meta name="twitter:description" content="Official documentation for Atmos, a beautiful weather app powered by Open-Meteo." />
+  <meta name="twitter:image" content="https://useatmos.me/src/assets/logo.png" />
+  <link rel="icon" type="image/png" href="../src/assets/favicon (3).png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════ -->
+<nav class="navbar">
+  <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <a href="/" class="navbar-brand">
+    <img src="../src/assets/logo.png" alt="Atmos" class="brand-logo"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+    <span class="brand-logo-fallback" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+      </svg>
+    </span>
+    <span class="brand-name">Atmos</span>
+    <span class="brand-version">Docs</span>
+  </a>
+
+  <div class="navbar-search">
+    <div class="search-wrap">
+      <svg class="search-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search documentation…" autocomplete="off" spellcheck="false"/>
+      <div class="search-shortcut">
+        <kbd>⌘</kbd><kbd>K</kbd>
+      </div>
+    </div>
+    <div class="search-dropdown" id="searchDropdown"></div>
+  </div>
+
+  <div class="navbar-spacer"></div>
+
+  <div class="navbar-links">
+    <a href="https://useatmos.me" class="navbar-link" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 2a14.5 14.5 0 000 20m0-20a14.5 14.5 0 010 20M2 12h20"/>
+      </svg>
+      Website
+    </a>
+    <a href="https://github.com/S-P-H-E/Atmos" class="navbar-link github" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844a9.59 9.59 0 012.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- overlay for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ══════════════════════════════════════
+     LAYOUT
+══════════════════════════════════════ -->
+<div class="docs-layout">
+
+  <!-- ══════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Getting Started -->
+    <div class="nav-group">
+      <div class="nav-group-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Getting Started
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="#" data-page="page-intro">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span class="nav-label">Introduction</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" data-page="page-install">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span class="nav-label">Installation</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" data-page="page-quickstart">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="nav-label">Quick Start</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <!-- Features -->
+    <div class="nav-group">
+      <div class="nav-group-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+        Features
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="#" data-page="page-features">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <span class="nav-label">Feature Overview</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" data-page="page-weather">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+            <span class="nav-label">Weather Data</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" data-page="page-ui">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+            <span class="nav-label">UI &amp; Themes</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <!-- Contributing -->
+    <div class="nav-group">
+      <div class="nav-group-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Contributing
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="#" data-page="page-contributing">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span class="nav-label">How to Contribute</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" data-page="page-tech">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            <span class="nav-label">Tech Stack</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" data-page="page-license">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span class="nav-label">License &amp; Credits</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </aside>
+
+  <!-- ══════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════ -->
+  <main class="docs-main">
+    <div class="docs-content">
+
+
+<!-- ════════════════════════════════════
+     PAGE: Introduction
+════════════════════════════════════ -->
+<article class="doc-page" id="page-intro">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Getting Started</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Introduction</span>
+  </nav>
+
+  <div class="hero-banner">
+    <div class="hero-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+      </svg>
+    </div>
+    <div class="hero-text">
+      <h1>Welcome to Atmos</h1>
+      <p>A beautiful, open-source weather app powered by <a href="https://open-meteo.com" target="_blank">Open-Meteo</a> — no API key, no account, no friction.</p>
+    </div>
+  </div>
+
+  <h2 id="what-is-atmos">What is Atmos?</h2>
+  <p>
+    Atmos is a weather web application built around clarity and aesthetics. It delivers real-time conditions,
+    hourly forecasts, and multi-day outlooks with a clean, distraction-free interface.
+    Unlike most weather apps, Atmos requires <strong>no account or API key</strong> to run — it's powered entirely
+    by the open <a href="https://open-meteo.com" target="_blank">Open-Meteo</a> API.
+  </p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20m0-20a14.5 14.5 0 010 20M2 12h20"/></svg>
+      </div>
+      <h3>Global Coverage</h3>
+      <p>Weather data for any location on Earth, with no geographical restrictions.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <h3>Real-time Updates</h3>
+      <p>Fresh forecast data updated hourly with no rate limits on the free tier.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+      </div>
+      <h3>Beautiful Design</h3>
+      <p>Crafted with modern UI principles — clean, readable, and visually elegant.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+      </div>
+      <h3>No API Key</h3>
+      <p>Zero configuration — clone and run. No environment variables needed.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2v-2H6v2a2 2 0 002 2zM6 8v5h12V8M6 8a4 4 0 018-4 4 4 0 018 4"/></svg>
+      </div>
+      <h3>Responsive</h3>
+      <p>Works great on desktop, tablet, and mobile with adaptive layouts.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+      </div>
+      <h3>Open Source</h3>
+      <p>MIT licensed. Fork it, self-host it, or contribute back to the project.</p>
+    </div>
+  </div>
+
+  <h2 id="why-atmos">Why Atmos?</h2>
+  <p>
+    Most weather apps are cluttered with ads, require account signups, or sit behind paid API keys.
+    Atmos solves all three: it's ad-free, account-free, and key-free. The goal is a weather experience
+    that's as pleasant to look at as it is functional.
+  </p>
+
+  <div class="admonition info">
+    <div class="admonition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01"/></svg></div>
+    <div class="admonition-body">
+      <div class="admonition-title">Note</div>
+      Atmos is actively developed. If you find bugs or have ideas, feel free to
+      <a href="https://github.com/S-P-H-E/Atmos/issues" target="_blank">open an issue</a> on GitHub.
+    </div>
+  </div>
+
+  <div class="page-nav"></div>
+</article>
+
+
+<!-- ════════════════════════════════════
+     PAGE: Installation
+════════════════════════════════════ -->
+<article class="doc-page" id="page-install">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Getting Started</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Installation</span>
+  </nav>
+
+  <h1 class="page-title">Installation</h1>
+  <p class="page-lead">Get Atmos running locally in minutes. You'll need <a href="https://nodejs.org" target="_blank">Node.js 18+</a> and <a href="https://git-scm.com" target="_blank">Git</a> installed on your machine.</p>
+
+  <h2 id="prerequisites">Prerequisites</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Tool</th><th>Version</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Node.js</strong></td><td>18 or higher</td><td>Required for the Vite dev server</td></tr>
+        <tr><td><strong>Git</strong></td><td>Any recent version</td><td>To clone the repository</td></tr>
+        <tr><td><strong>npm / pnpm</strong></td><td>Latest</td><td>pnpm recommended for speed</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="clone-install">Clone &amp; Install</h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Clone the repository</h3>
+        <div class="code-block terminal">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="code-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
+          </div>
+          <pre><code>git clone https://github.com/S-P-H-E/Atmos.git
+cd Atmos</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Install dependencies</h3>
+        <div class="code-block terminal">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="code-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
+          </div>
+          <pre><code>npm install
+# or with pnpm (recommended)
+pnpm install</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Start the dev server</h3>
+        <div class="code-block terminal">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="code-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
+          </div>
+          <pre><code>npm run dev
+# or
+pnpm dev</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Open in your browser</h3>
+        <p>Visit <code>http://localhost:5173</code> — Atmos should be live and ready.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="admonition tip">
+    <div class="admonition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+    <div class="admonition-body">
+      <div class="admonition-title">No .env needed</div>
+      Atmos uses Open-Meteo which is completely free and open. No <code>.env</code> file, no API keys, no accounts required.
+    </div>
+  </div>
+
+  <h2 id="production-build">Production Build</h2>
+  <p>To create an optimised production build for deployment:</p>
+  <div class="code-block terminal">
+    <div class="code-header">
+      <span class="code-lang">bash</span>
+      <button class="code-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
+    </div>
+    <pre><code>npm run build
+# Output is in the /dist directory</code></pre>
+  </div>
+  <p>Deploy the <code>/dist</code> folder to any static host — Vercel, Netlify, Cloudflare Pages, or your own server.</p>
+
+  <div class="page-nav"></div>
+</article>
+
+
+<!-- ════════════════════════════════════
+     PAGE: Quick Start
+════════════════════════════════════ -->
+<article class="doc-page" id="page-quickstart">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Getting Started</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Quick Start</span>
+  </nav>
+
+  <h1 class="page-title">Quick Start</h1>
+  <p class="page-lead">A 60-second guide to understand the core Atmos experience once you're up and running.</p>
+
+  <h2 id="using-atmos">Using Atmos</h2>
+  <p>When you open Atmos for the first time, it will request location access and load your local weather dashboard.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Allow location access</h3>
+        <p>Atmos uses your browser's geolocation to detect your city automatically. You can also search any city manually using the search bar.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>View your dashboard</h3>
+        <p>The main screen shows current temperature, weather condition, feels-like temperature, humidity, and wind speed at a glance.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Explore forecasts</h3>
+        <p>Scroll down for the 24-hour timeline and 7-day outlook. Tap any day for a detailed daily breakdown.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Switch units</h3>
+        <p>Toggle between Celsius and Fahrenheit from the settings panel in the top-right corner. Your preference is saved automatically.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="admonition info">
+    <div class="admonition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+    <div class="admonition-body">
+      <div class="admonition-title">Search tip</div>
+      Use the search bar to look up weather for any city worldwide — just type a city name and select from the autocomplete suggestions.
+    </div>
+  </div>
+
+  <div class="page-nav"></div>
+</article>
+
+
+<!-- ════════════════════════════════════
+     PAGE: Feature Overview
+════════════════════════════════════ -->
+<article class="doc-page" id="page-features">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Features</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Feature Overview</span>
+  </nav>
+
+  <h1 class="page-title">Feature Overview</h1>
+  <p class="page-lead">Everything Atmos can do, at a glance.</p>
+
+  <h2 id="current-weather">Current Weather</h2>
+  <p>
+    The hero section always shows you the most important information first: temperature, condition,
+    feels-like, and the high/low for the day. Weather icons adapt to the current condition and time of day
+    — different icons for clear morning vs clear night, for example.
+  </p>
+
+  <h2 id="hourly-forecast">Hourly Forecast</h2>
+  <p>
+    A scrollable hourly timeline shows the next 24 hours — temperature curve, precipitation probability,
+    and wind speed at each hour. Times are displayed in your local timezone automatically.
+  </p>
+
+  <h2 id="seven-day">7-Day Outlook</h2>
+  <p>
+    The weekly forecast card gives you a quick overview of the week ahead.
+    Tap any day to see an expanded breakdown with min/max temperatures and precipitation chance.
+  </p>
+
+  <h2 id="air-uv">Air Quality &amp; UV Index</h2>
+  <p>
+    Atmos surfaces the UV index and — where available — an air quality index (AQI), so you know
+    whether to apply sunscreen or avoid intense outdoor exercise.
+  </p>
+
+  <div class="admonition warning">
+    <div class="admonition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div>
+    <div class="admonition-body">
+      <div class="admonition-title">Regional availability</div>
+      Air quality data coverage depends on your region. Open-Meteo covers most of Europe, North America, and major global cities.
+    </div>
+  </div>
+
+  <h2 id="location-search">Location Search</h2>
+  <p>
+    Search any city or region worldwide. Atmos uses the Open-Meteo geocoding API to resolve names to
+    coordinates, then fetches the forecast for that exact location.
+  </p>
+
+  <div class="page-nav"></div>
+</article>
+
+
+<!-- ════════════════════════════════════
+     PAGE: Weather Data
+════════════════════════════════════ -->
+<article class="doc-page" id="page-weather">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Features</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Weather Data</span>
+  </nav>
+
+  <h1 class="page-title">Weather Data</h1>
+  <p class="page-lead">How Atmos fetches, processes, and displays weather information.</p>
+
+  <h2 id="open-meteo">Open-Meteo API</h2>
+  <p>
+    Atmos is powered entirely by <a href="https://open-meteo.com" target="_blank">Open-Meteo</a> — a free, open-source
+    weather API that requires no authentication. It aggregates data from multiple national meteorological services
+    including <strong>NOAA</strong>, <strong>DWD</strong>, <strong>ECMWF</strong>, and more.
+  </p>
+
+  <div class="admonition info">
+    <div class="admonition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01"/></svg></div>
+    <div class="admonition-body">
+      <div class="admonition-title">Free tier</div>
+      Open-Meteo data is updated hourly with no rate limits for non-commercial use — perfect for open-source projects like Atmos.
+    </div>
+  </div>
+
+  <h2 id="data-variables">Data Variables</h2>
+  <p>Atmos fetches and displays the following weather variables from the API:</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Variable</th><th>Source</th><th>Update frequency</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Temperature (2m)</td><td>Open-Meteo</td><td>Hourly</td></tr>
+        <tr><td>Feels-like (apparent temp)</td><td>Open-Meteo</td><td>Hourly</td></tr>
+        <tr><td>Precipitation probability</td><td>Open-Meteo</td><td>Hourly</td></tr>
+        <tr><td>Wind speed &amp; direction</td><td>Open-Meteo</td><td>Hourly</td></tr>
+        <tr><td>Relative humidity</td><td>Open-Meteo</td><td>Hourly</td></tr>
+        <tr><td>UV Index</td><td>Open-Meteo</td><td>Daily</td></tr>
+        <tr><td>Weather code (WMO)</td><td>Open-Meteo</td><td>Hourly</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="geocoding">Geocoding</h2>
+  <p>
+    Location search is powered by the
+    <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank">Open-Meteo Geocoding API</a>,
+    which resolves city names to coordinates and returns timezone and country data.
+    Atmos then uses those coordinates to fetch the full forecast.
+  </p>
+
+  <div class="page-nav"></div>
+</article>
+
+
+<!-- ════════════════════════════════════
+     PAGE: UI & Themes
+════════════════════════════════════ -->
+<article class="doc-page" id="page-ui">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Features</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>UI &amp; Themes</span>
+  </nav>
+
+  <h1 class="page-title">UI &amp; Themes</h1>
+  <p class="page-lead">Atmos is designed to be as beautiful as it is functional. Here's what goes into its visual system.</p>
+
+  <h2 id="design-philosophy">Design Philosophy</h2>
+  <p>
+    Atmos follows a <strong>calm design</strong> philosophy — information is prioritised without visual noise.
+    Typography is large and legible. Icons are symbolic, not decorative. White space is generous.
+    The result is a weather app that feels like a well-designed dashboard, not a cluttered portal.
+  </p>
+
+  <h2 id="dynamic-backgrounds">Dynamic Backgrounds</h2>
+  <p>
+    The app background adapts to current conditions and time of day — warm sunrise gradients in the morning,
+    deep blues at night, stormy greys when rain is detected. This makes Atmos feel alive and contextually aware.
+  </p>
+
+  <h2 id="weather-icons">Weather Icons</h2>
+  <p>
+    Icons are rendered from a custom set designed specifically for Atmos. They adapt to light and dark contexts
+    and represent all WMO weather codes — clear, cloudy, foggy, rainy, snowy, stormy, and more.
+  </p>
+
+  <h2 id="units">Units &amp; Localisation</h2>
+  <p>
+    Users can toggle between metric (°C, km/h, mm) and imperial (°F, mph, in) units.
+    The preference is saved to <code>localStorage</code> and persists automatically across sessions.
+  </p>
+
+  <div class="page-nav"></div>
+</article>
+
+
+<!-- ════════════════════════════════════
+     PAGE: Contributing
+════════════════════════════════════ -->
+<article class="doc-page" id="page-contributing">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Contributing</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>How to Contribute</span>
+  </nav>
+
+  <h1 class="page-title">How to Contribute</h1>
+  <p class="page-lead">Atmos is open source and welcomes contributions of all kinds — bug fixes, features, design improvements, or documentation.</p>
+
+  <h2 id="before-you-start">Before You Start</h2>
+  <p>
+    Check the <a href="https://github.com/S-P-H-E/Atmos/issues" target="_blank">open issues</a> before starting work
+    to avoid duplicating effort. If you want to build something new, open an issue first to discuss the approach.
+  </p>
+
+  <h2 id="workflow">Contribution Workflow</h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Fork the repository</h3>
+        <p>Click <strong>Fork</strong> on GitHub to create your own copy of Atmos under your account.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Create a feature branch</h3>
+        <div class="code-block terminal">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="code-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
+          </div>
+          <pre><code>git checkout -b feature/your-feature-name</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Make your changes</h3>
+        <p>Follow the existing code style. Keep commits small and focused with descriptive messages.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Submit a pull request</h3>
+        <p>Open a PR against the <code>main</code> branch with a clear description of what you changed and why.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="code-style">Code Style</h2>
+  <p>
+    Atmos uses <strong>ESLint</strong> and <strong>Prettier</strong> for consistent formatting.
+    Run <code>npm run lint</code> before submitting. PRs with lint errors won't be merged.
+  </p>
+
+  <div class="admonition tip">
+    <div class="admonition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div>
+    <div class="admonition-body">
+      <div class="admonition-title">Star the repo</div>
+      If Atmos has been useful to you, giving it a <a href="https://github.com/S-P-H-E/Atmos" target="_blank">star on GitHub</a> really helps the project grow.
+    </div>
+  </div>
+
+  <div class="page-nav"></div>
+</article>
+
+
+<!-- ════════════════════════════════════
+     PAGE: Tech Stack
+════════════════════════════════════ -->
+<article class="doc-page" id="page-tech">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Contributing</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Tech Stack</span>
+  </nav>
+
+  <h1 class="page-title">Tech Stack</h1>
+  <p class="page-lead">The tools and technologies that power Atmos under the hood.</p>
+
+  <h2 id="frontend">Frontend</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Technology</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td><strong>React</strong></td><td>UI component framework</td></tr>
+        <tr><td><strong>TypeScript</strong></td><td>Type-safe JavaScript</td></tr>
+        <tr><td><strong>Vite</strong></td><td>Build tool &amp; dev server</td></tr>
+        <tr><td><strong>Tailwind CSS</strong></td><td>Utility-first styling</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="apis">APIs &amp; Data</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Service</th><th>Purpose</th><th>Cost</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://open-meteo.com" target="_blank">Open-Meteo</a></td><td>Weather forecast data</td><td><span class="badge badge-green">Free</span></td></tr>
+        <tr><td>Open-Meteo Geocoding</td><td>City &amp; location search</td><td><span class="badge badge-green">Free</span></td></tr>
+        <tr><td>Browser Geolocation API</td><td>Auto-detect user location</td><td><span class="badge badge-green">Free</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="deployment">Deployment</h2>
+  <p>
+    The live version at <a href="https://useatmos.me" target="_blank">useatmos.me</a> is deployed on
+    <strong>Vercel</strong>. Every push to <code>main</code> automatically triggers a production deployment.
+    You can self-host the <code>/dist</code> build on any static hosting provider that supports SPA routing.
+  </p>
+
+  <div class="page-nav"></div>
+</article>
+
+
+<!-- ════════════════════════════════════
+     PAGE: License & Credits
+════════════════════════════════════ -->
+<article class="doc-page" id="page-license">
+
+  <nav class="breadcrumb">
+    <span>Docs</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>Contributing</span>
+    <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+    <span>License &amp; Credits</span>
+  </nav>
+
+  <h1 class="page-title">License &amp; Credits</h1>
+  <p class="page-lead">Atmos is free and open source. Here's what that means and who made it possible.</p>
+
+  <h2 id="license">License</h2>
+  <p>
+    Atmos is released under the <strong>MIT License</strong>. You're free to use, copy, modify, merge,
+    publish, distribute, sublicense, or sell copies — with attribution.
+  </p>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">text</span>
+      <button class="code-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
+    </div>
+    <pre><code>MIT License
+
+Copyright (c) 2026 kebab
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</code></pre>
+  </div>
+
+  <h2 id="credits">Credits</h2>
+  <ul>
+    <li><strong><a href="https://open-meteo.com" target="_blank">Open-Meteo</a></strong> — free weather API powering all forecast data</li>
+    <li><strong><a href="https://fonts.google.com/specimen/Inter" target="_blank">Inter</a></strong> — typeface by Rasmus Andersson</li>
+    <li><strong><a href="https://vitejs.dev" target="_blank">Vite</a></strong> — blazing fast build tooling</li>
+    <li><strong><a href="https://react.dev" target="_blank">React</a></strong> — UI library by Meta Open Source</li>
+    <li><strong><a href="https://tailwindcss.com" target="_blank">Tailwind CSS</a></strong> — utility-first CSS framework</li>
+  </ul>
+
+  <div class="admonition tip">
+    <div class="admonition-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div>
+    <div class="admonition-body">
+      <div class="admonition-title">Like Atmos?</div>
+      Please consider giving the repo a <a href="https://github.com/S-P-H-E/Atmos" target="_blank">star on GitHub</a> — it really helps others discover the project!
+    </div>
+  </div>
+
+  <div class="page-nav"></div>
+</article>
+
+
+    </div><!-- /docs-content -->
+  </main>
+
+  <!-- ══════════════════════════════════
+       RIGHT TOC
+  ══════════════════════════════════ -->
+  <aside class="toc-sidebar" id="tocSidebar">
+    <div class="toc-header">On this page</div>
+    <ul class="toc-list" id="tocList"></ul>
+  </aside>
+
+</div><!-- /docs-layout -->
+
+<script src="script.js"></script>
+</body>
+</html>

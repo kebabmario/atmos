@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Atmos</title>
+  <meta name="description" content="Atmos is a sleek, minimal weather app delivering real-time forecasts powered by the free and privacy-respecting Open-Meteo API. No account needed." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://useatmos.me" />
+  <meta property="og:title" content="Atmos — Weather App" />
+  <meta property="og:description" content="Real-time weather forecasts powered by Open-Meteo. Current conditions, hourly breakdown, and 7-day forecast. No account needed." />
+  <meta property="og:image" content="https://useatmos.me/src/assets/logo.png" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Atmos — Weather App" />
+  <meta name="twitter:description" content="Real-time weather forecasts powered by Open-Meteo. Current conditions, hourly breakdown, and 7-day forecast. No account needed." />
+  <meta name="twitter:image" content="https://useatmos.me/src/assets/logo.png" />
+
+  <link rel="icon" type="image/png" href="src/assets/favicon (3).png" />
+  <link rel="stylesheet" href="src/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- tsparticles for interactive weather backgrounds -->
+  <script src="https://cdn.jsdelivr.net/npm/@tsparticles/engine@3/tsparticles.engine.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@3/tsparticles.slim.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- ════════════ DYNAMIC WEATHER BACKDROP ════════════ -->
+  <div class="backdrop" id="backdrop">
+    <!-- 1. Sky gradient (color shifts with time-of-day + weather) -->
+    <div class="sky" id="sky"></div>
+
+    <!-- 2. Sky glow (subtle celestial highlight baked into the sky) -->
+    <div class="sky-glow" id="skyGlow"></div>
+
+    <!-- 3. Stars layer (visible at night) -->
+    <div class="stars" id="stars" aria-hidden="true"></div>
+
+    <!-- 4. Cloud silhouettes (parallax drift) -->
+    <div class="clouds" id="clouds" aria-hidden="true">
+      <svg class="cloud cloud-a" viewBox="0 0 240 100" preserveAspectRatio="xMidYMid meet">
+        <path d="M30 78 C8 78, 0 56, 22 50 C18 30, 44 18, 60 30 C68 12, 96 8, 112 22 C124 8, 152 12, 156 30 C180 26, 200 42, 196 60 C214 62, 218 80, 200 84 C190 92, 60 92, 50 88 C40 92, 30 88, 30 78 Z" fill="currentColor"/>
+      </svg>
+      <svg class="cloud cloud-b" viewBox="0 0 240 100" preserveAspectRatio="xMidYMid meet">
+        <path d="M28 82 C6 80, 4 60, 26 54 C22 36, 46 22, 64 32 C72 16, 100 12, 116 26 C128 14, 154 18, 158 34 C182 32, 198 46, 194 64 C212 66, 214 84, 196 88 C186 94, 60 94, 50 90 C40 94, 28 90, 28 82 Z" fill="currentColor"/>
+      </svg>
+      <svg class="cloud cloud-c" viewBox="0 0 240 100" preserveAspectRatio="xMidYMid meet">
+        <path d="M30 78 C8 78, 0 56, 22 50 C18 30, 44 18, 60 30 C68 12, 96 8, 112 22 C124 8, 152 12, 156 30 C180 26, 200 42, 196 60 C214 62, 218 80, 200 84 C190 92, 60 92, 50 88 C40 92, 30 88, 30 78 Z" fill="currentColor"/>
+      </svg>
+      <svg class="cloud cloud-d" viewBox="0 0 240 100" preserveAspectRatio="xMidYMid meet">
+        <path d="M28 82 C6 80, 4 60, 26 54 C22 36, 46 22, 64 32 C72 16, 100 12, 116 26 C128 14, 154 18, 158 34 C182 32, 198 46, 194 64 C212 66, 214 84, 196 88 C186 94, 60 94, 50 90 C40 94, 28 90, 28 82 Z" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <!-- 5. Fog/mist veil -->
+    <div class="fog-layer" id="fogLayer" aria-hidden="true"></div>
+
+    <!-- 6. Particles (rain / snow) — interactive canvas -->
+    <div id="tsparticles"></div>
+
+    <!-- 7. Lightning flash overlay -->
+    <div class="lightning" id="lightning" aria-hidden="true"></div>
+
+    <!-- 8. Vignette for depth -->
+    <div class="vignette" aria-hidden="true"></div>
+  </div>
+
+  <!-- ════════════ APP UI ════════════ -->
+  <div class="app" id="app">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <img src="src/assets/logo.png" alt="Atmos" class="app-logo" />
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="cityInput" placeholder="Search for a city..." />
+        <button id="searchBtn" aria-label="Search">Go</button>
+      </div>
+      <nav class="top-nav-links">
+        <a href="https://github.com/kebabmario/atmos/" class="top-nav-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://useatmos.me/docs" class="top-nav-link" target="_blank" rel="noopener noreferrer">Docs</a>
+      </nav>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+
+        <div class="weather-hero">
+          <div class="location" id="location">Loading...</div>
+          <div class="temp-main" id="tempMain">--°</div>
+          <div class="condition" id="condition">--</div>
+          <div class="temp-range" id="tempRange">H:--°  L:--°</div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <svg class="card-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="card-label">HOURLY FORECAST</span>
+          </div>
+          <div class="hourly-scroll" id="hourlyScroll"></div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <svg class="card-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span class="card-label">7-DAY FORECAST</span>
+          </div>
+          <div id="weeklyForecast"></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <div class="details-grid">
+
+          <!-- Sun arc -->
+          <div class="detail-card detail-wide">
+            <div class="card-header">
+              <svg class="card-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+              <span class="card-label">SUNSET</span>
+            </div>
+            <div class="sun-arc-container">
+              <svg class="sun-arc" viewBox="0 0 200 100" preserveAspectRatio="none">
+                <path class="sun-arc-bg" d="M10 90 Q100 -20 190 90" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="3 4"/>
+                <path class="sun-arc-fill" id="sunArcFill" d="M10 90 Q100 -20 190 90" fill="none" stroke="rgba(255,200,80,0.95)" stroke-width="2" stroke-dasharray="0 999"/>
+                <circle id="sunDot" cx="10" cy="90" r="5" fill="#ffd97a"/>
+              </svg>
+              <div class="sun-times">
+                <span id="sunset">--:--</span>
+                <span class="sun-times-sub">Sunrise: <b id="sunrise">--:--</b></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <div class="card-header">
+              <svg class="card-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-13a8 8 0 1 0-16 0c0 8.5 8 13 8 13z"/><path d="M12 17a4 4 0 0 0 0-8"/></svg>
+              <span class="card-label">HUMIDITY</span>
+            </div>
+            <div class="detail-value" id="humidity">--%</div>
+            <div class="detail-sub" id="humiditySub">Dew point</div>
+          </div>
+
+          <div class="detail-card">
+            <div class="card-header">
+              <svg class="card-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+              <span class="card-label">WIND</span>
+            </div>
+            <div class="wind-content">
+              <div class="wind-compass" id="windCompass">
+                <div class="wind-needle" id="windNeedle"></div>
+                <div class="wind-cardinals"><span>N</span><span>E</span><span>S</span><span>W</span></div>
+                <div class="wind-center-label" id="windCenter">--<small>km/h</small></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <div class="card-header">
+              <svg class="card-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+              <span class="card-label">FEELS LIKE</span>
+            </div>
+            <div class="detail-value" id="feelsLike">--°</div>
+            <div class="detail-sub" id="feelsLikeSub">Similar to actual</div>
+          </div>
+
+          <div class="detail-card">
+            <div class="card-header">
+              <svg class="card-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 1 0 0-9h-1.8a7 7 0 1 0-10.4 7"/></svg>
+              <span class="card-label">CLOUD COVER</span>
+            </div>
+            <div class="detail-value" id="cloudCover">--%</div>
+            <div class="cloud-bar"><div class="cloud-bar-fill" id="cloudBar"></div></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="src/app.js"></script>
+</body>
+</html>
