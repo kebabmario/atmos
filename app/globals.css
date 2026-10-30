@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", "Helvetica Neue",
+    "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    monospace;
+
+  --color-paper: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-ink: #1d1d1f;
+  --color-muted: #86868b;
+  --color-muted-strong: #6e6e73;
+  --color-hairline: rgba(0, 0, 0, 0.1);
+  --color-live: #248a3d;
+  --color-amber: #e8a838;
+  --color-link: #0066cc;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100svh;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The faint dot screen the portfolio lays over its paper, kept quieter here. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(0, 0, 0, 0.045) 0.55px, transparent 0.55px);
+    background-size: 4px 4px;
+    -webkit-mask-image: linear-gradient(#000, transparent 78%);
+    mask-image: linear-gradient(#000, transparent 78%);
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: rgba(232, 168, 56, 0.28);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  input::placeholder {
+    color: #a1a1a6;
+  }
+}
+
+@utility tnum {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------- forecast chart ---------- */
+
+.chart-grid {
+  stroke: rgba(0, 0, 0, 0.08);
+  stroke-width: 1;
+}
+
+.chart-axis-label {
+  font-size: 10.5px;
+  fill: #86868b;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-value-label {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #1d1d1f;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-hour-label {
+  font-size: 11px;
+  fill: #6e6e73;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-line {
+  fill: none;
+  stroke: #1d1d1f;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chart-bar {
+  fill: #cdd9e5;
+}
+
+.chart-bar-strong {
+  fill: #a3bfd8;
+}
+
+.chart-now {
+  stroke: rgba(232, 168, 56, 0.85);
+  stroke-width: 1.5;
+  stroke-dasharray: 2 3;
+}
+
+.chart-now-dot {
+  fill: var(--color-amber);
+  stroke: var(--color-paper);
+  stroke-width: 2.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
