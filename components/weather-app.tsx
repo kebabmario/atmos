@@ -68,7 +68,18 @@ type WeatherAppProps = {
 export function WeatherApp({ initialPlace, initialReport, defaultUnit }: WeatherAppProps) {
   const [place, setPlace] = useState<Place>(initialPlace);
   const [report, setReport] = useState<WeatherReport | null>(initialReport);
-  const [unit, setUnit] = useState<TemperatureUnit>(defaultUnit);
+  
+  // Lazy-initialize unit from localStorage to avoid calling setState inside an effect
+  const [unit, setUnit] = useState<TemperatureUnit>(() => {
+    try {
+      const savedUnit = window.localStorage.getItem(UNIT_KEY);
+      if (savedUnit === "c" || savedUnit === "f") return savedUnit;
+    } catch {
+      // Ignore unreadable storage.
+    }
+    return defaultUnit;
+  });
+
   const [status, setStatus] = useState<"idle" | "loading" | "error">(
     initialReport ? "idle" : "loading",
   );
@@ -105,19 +116,16 @@ export function WeatherApp({ initialPlace, initialReport, defaultUnit }: Weather
   }, []);
 
   useEffect(() => {
-    try {
-      const savedUnit = window.localStorage.getItem(UNIT_KEY);
-      if (savedUnit === "c" || savedUnit === "f") setUnit(savedUnit);
-    } catch {
-      // Ignore unreadable storage.
-    }
-
     const saved = readStoredPlace();
-    if (saved && !samePlace(saved, initialPlace)) {
-      void load(saved);
-    } else if (!initialReport) {
-      void load(initialPlace);
-    }
+    
+    // Defer the async state-updating loader out of the synchronous render cycle
+    queueMicrotask(() => {
+      if (saved && !samePlace(saved, initialPlace)) {
+        void load(saved);
+      } else if (!initialReport) {
+        void load(initialPlace);
+      }
+    });
     // Restore once on mount only.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

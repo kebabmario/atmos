@@ -21,15 +21,10 @@ export function SearchField({ onSelect, className = "" }: SearchFieldProps) {
   useEffect(() => {
     const term = query.trim();
 
-    if (term.length < 2) {
-      setResults([]);
-      setPending(false);
-      setSearched(false);
-      setActive(-1);
-      return;
-    }
+    if (term.length < 2) return;
 
-    setPending(true);
+    queueMicrotask(() => setPending(true));
+
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       try {
@@ -109,8 +104,15 @@ export function SearchField({ onSelect, className = "" }: SearchFieldProps) {
           ref={inputRef}
           value={query}
           onChange={(event) => {
-            setQuery(event.target.value);
+            const val = event.target.value;
+            setQuery(val);
             setOpen(true);
+            if (val.trim().length < 2) {
+              setResults([]);
+              setPending(false);
+              setSearched(false);
+              setActive(-1);
+            }
           }}
           onFocus={() => {
             if (query.trim().length >= 2) setOpen(true);
@@ -132,6 +134,10 @@ export function SearchField({ onSelect, className = "" }: SearchFieldProps) {
             type="button"
             onClick={() => {
               setQuery("");
+              setResults([]);
+              setPending(false);
+              setSearched(false);
+              setActive(-1);
               inputRef.current?.focus();
             }}
             aria-label="Clear search"
