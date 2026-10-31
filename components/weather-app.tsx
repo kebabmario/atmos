@@ -1,13 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import brandMark from "@/app/icon.png";
 import { CurrentBlock } from "@/components/current-block";
 import { DailyList } from "@/components/daily-list";
 import { DetailList } from "@/components/detail-list";
 import { HourlyChart } from "@/components/hourly-chart";
 import { LocateButton, SearchField, UnitToggle } from "@/components/top-bar";
 import { daySummary } from "@/lib/summary";
-import { skyWash } from "@/lib/tint";
 import {
   currentUvIndex,
   describeWeather,
@@ -193,25 +194,23 @@ export function WeatherApp({ initialPlace, initialReport, defaultUnit }: Weather
   const localTime = report ? formatLocalTime(report.timezone) : "";
   const localDate = report ? formatLocalDate(report.timezone) : "";
   const busy = status === "loading";
-  const wash =
-    report && condition ? skyWash(condition.kind, report.current.isDay) : null;
 
   return (
     <>
-      {wash ? (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed inset-0 z-0"
-          style={{
-            backgroundImage: `radial-gradient(115% 85% at 100% -8%, ${wash.warm}, transparent 55%), radial-gradient(85% 65% at 93% 0, ${wash.cool}, transparent 60%)`,
-          }}
-        />
-      ) : null}
-
       <div className="relative z-10 mx-auto w-full max-w-[640px] px-[18px] pb-16 sm:px-7">
         <header className="flex flex-wrap items-baseline gap-x-5 gap-y-3 pt-6">
-          <span className="order-1 mr-auto text-[13px] font-bold tracking-[-0.01em] text-ink">
-            atmos
+          <span className="order-1 mr-auto inline-flex items-center gap-[7px]">
+            <Image
+              src={brandMark}
+              alt=""
+              aria-hidden="true"
+              priority
+              width={24}
+              height={24}
+              sizes="24px"
+              className="h-[24px] w-[24px] shrink-0"
+            />
+            <span className="text-[13px] font-bold tracking-[-0.01em] text-ink">atmos</span>
           </span>
           <UnitToggle unit={unit} onChange={handleUnitChange} className="order-2 sm:order-4" />
           <span className="order-3 h-0 w-full basis-full sm:hidden" aria-hidden="true" />

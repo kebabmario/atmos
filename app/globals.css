@@ -36,19 +36,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* The faint dot screen the portfolio lays over its paper, kept quieter here. */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: radial-gradient(rgba(0, 0, 0, 0.045) 0.55px, transparent 0.55px);
-    background-size: 4px 4px;
-    -webkit-mask-image: linear-gradient(#000, transparent 78%);
-    mask-image: linear-gradient(#000, transparent 78%);
-  }
-
   * {
     -webkit-tap-highlight-color: transparent;
   }
@@ -84,6 +71,46 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* ---------- background ---------- */
+
+.grainient-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.grainient-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The still, grainy sky sits under the page and dissolves into the paper. */
+.sky-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.82;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 38%,
+    rgba(0, 0, 0, 0.45) 68%,
+    transparent 96%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 38%,
+    rgba(0, 0, 0, 0.45) 68%,
+    transparent 96%
+  );
 }
 
 /* ---------- forecast chart ---------- */

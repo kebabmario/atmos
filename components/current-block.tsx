@@ -66,7 +66,7 @@ export function CurrentBlock({
       </p>
 
       <div className="mt-7 flex items-start gap-4 sm:gap-6">
-        <p className="tnum text-[clamp(4.4rem,16.5vw,6.5rem)] font-medium leading-[0.88] tracking-[-0.045em] text-ink">
+        <p className="tnum text-[clamp(4.4rem,16.5vw,6.5rem)] font-normal leading-[0.88] tracking-[-0.045em] text-ink">
           {formatTemperatureValue(current.temperature, unit)}
           <span className="relative top-[0.26em] -ml-[0.04em] align-top text-[0.3em] tracking-normal">
             °
