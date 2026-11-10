@@ -98,8 +98,8 @@ export function SearchField({ onSelect, className = "" }: SearchFieldProps) {
   const showEmpty = searched && !pending && query.trim().length >= 2 && results.length === 0;
 
   return (
-    <div ref={containerRef} className={`relative ${className}`}>
-      <div className="flex items-baseline gap-2 border-b border-dotted border-[rgba(0,0,0,0.28)] pb-1 transition-colors duration-150 focus-within:border-solid focus-within:border-ink">
+    <div ref={containerRef} className={`search ${className}`}>
+      <div className="search-field">
         <input
           ref={inputRef}
           value={query}
@@ -127,7 +127,6 @@ export function SearchField({ onSelect, className = "" }: SearchFieldProps) {
           aria-activedescendant={active >= 0 ? `place-option-${active}` : undefined}
           autoComplete="off"
           spellCheck={false}
-          className="w-full min-w-0 bg-transparent text-[13px] text-ink outline-none"
         />
         {query.length > 0 ? (
           <button
@@ -141,7 +140,7 @@ export function SearchField({ onSelect, className = "" }: SearchFieldProps) {
               inputRef.current?.focus();
             }}
             aria-label="Clear search"
-            className="-mb-1 shrink-0 text-[15px] leading-none text-muted transition-colors hover:text-ink"
+            className="search-clear"
           >
             ×
           </button>
@@ -149,10 +148,10 @@ export function SearchField({ onSelect, className = "" }: SearchFieldProps) {
       </div>
 
       {open && (results.length > 0 || showEmpty) ? (
-        <div className="absolute left-0 top-[calc(100%+8px)] z-30 min-w-full overflow-hidden rounded-[10px] border border-hairline bg-surface py-1 shadow-[0_20px_36px_-26px_rgba(0,0,0,0.45)] sm:w-[280px]">
+        <div className="results">
           {showEmpty ? (
-            <p className="px-3 py-2.5 text-[12.5px] text-muted">
-              No places match “{query.trim()}”.
+            <p className="empty">
+              no places match “{query.trim()}”
             </p>
           ) : null}
           <ul id="place-results" role="listbox" aria-label="Matching places">
@@ -165,18 +164,15 @@ export function SearchField({ onSelect, className = "" }: SearchFieldProps) {
                   aria-selected={index === active}
                   onMouseEnter={() => setActive(index)}
                   onClick={() => choose(place)}
-                  className={`flex w-full items-baseline justify-between gap-3 px-3 py-1.5 text-left transition-colors duration-150 ${
-                    index === active ? "bg-[rgba(0,0,0,0.045)]" : ""
-                  }`}
                 >
-                  <span className="min-w-0">
-                    <span className="block truncate text-[13px] text-ink">{place.name}</span>
-                    <span className="block truncate text-[12px] text-muted">
+                  <span>
+                    {place.name}
+                    <small>
                       {[place.admin1, place.country].filter(Boolean).join(", ") || "—"}
-                    </span>
+                    </small>
                   </span>
                   {place.countryCode ? (
-                    <span className="shrink-0 text-[11px] text-muted">{place.countryCode}</span>
+                    <small>{place.countryCode}</small>
                   ) : null}
                 </button>
               </li>
@@ -204,7 +200,7 @@ export function LocateButton({
       disabled={busy}
       aria-label="Use my current location"
       title="Use my current location"
-      className={`shrink-0 text-[13px] text-muted-strong transition-colors duration-150 hover:text-ink disabled:cursor-wait disabled:text-muted ${className}`}
+      className={`control ${className}`}
     >
       {busy ? "locating…" : "use my location"}
     </button>
@@ -224,7 +220,7 @@ export function UnitToggle({
     <div
       role="group"
       aria-label="Temperature unit"
-      className={`flex shrink-0 items-baseline gap-2 text-[13px] ${className}`}
+      className={`units ${className}`}
     >
       {(["c", "f"] as const).map((option) => (
         <button
@@ -232,9 +228,7 @@ export function UnitToggle({
           type="button"
           onClick={() => onChange(option)}
           aria-pressed={unit === option}
-          className={`transition-colors duration-150 ${
-            unit === option ? "font-bold text-ink" : "text-muted hover:text-ink"
-          }`}
+          className="control"
         >
           °{option}
         </button>

@@ -1,6 +1,8 @@
 import {
   describeWeather,
+  formatClock,
   formatTemperatureValue,
+  minutesSinceMidnight,
   type CurrentConditions,
   type DailyPoint,
   type Place,
@@ -12,18 +14,18 @@ type CurrentBlockProps = {
   current: CurrentConditions;
   today: DailyPoint;
   unit: TemperatureUnit;
+  summary: string;
+  status: "idle" | "loading" | "error";
+  /** Local clock at the place; empty until the client knows it. */
   localTime: string;
   localDate: string;
-  status: "idle" | "loading" | "error";
+  nowMinutes: number | null;
 };
 
-function Figure({ label, value }: { label: string; value: string }) {
-  return (
-    <span className="whitespace-nowrap">
-      <span className="text-muted">{label} </span>
-      <span className="tnum font-semibold text-ink">{value}</span>
-    </span>
-  );
+function daylightPhase(today: DailyPoint, now: number): string {
+  if (now < minutesSinceMidnight(today.sunrise)) return `dark, sunrise at ${formatClock(today.sunrise)}`;
+  if (now < minutesSinceMidnight(today.sunset)) return `light until ${formatClock(today.sunset)}`;
+  return `dark since ${formatClock(today.sunset)}`;
 }
 
 export function CurrentBlock({
@@ -31,62 +33,43 @@ export function CurrentBlock({
   current,
   today,
   unit,
+  summary,
+  status,
   localTime,
   localDate,
-  status,
+  nowMinutes,
 }: CurrentBlockProps) {
   const condition = describeWeather(current.weatherCode);
-  const dot =
+  const region = [place.admin1, place.country].filter(Boolean).join(", ");
+  const degrees = (value: number) => `${formatTemperatureValue(value, unit)}°`;
+  const statusText =
     status === "loading"
-      ? "bg-amber animate-pulse"
+      ? "updating"
       : status === "error"
-        ? "bg-[#c7c7cc]"
-        : "bg-live";
+        ? "could not update"
+        : `observed at ${formatClock(current.time)}`;
 
   return (
-    <section aria-label="Current conditions" className="pt-9 sm:pt-11">
-      <div className="flex items-baseline justify-between gap-4">
-        <h1 className="min-w-0 text-[clamp(1.65rem,6.6vw,2.35rem)] font-medium leading-[1.1] tracking-[-0.028em] text-ink">
-          <span className="align-middle">{place.name}</span>
-          <span
-            className={`ml-2 inline-block h-[8px] w-[8px] shrink-0 -translate-y-[0.06em] rounded-full align-middle ${dot}`}
-            aria-hidden="true"
-          />
-        </h1>
-        <p className="tnum shrink-0 font-mono text-[12px] leading-none lowercase text-muted">
-          {localTime}
+    <section className="now" aria-label="Current conditions">
+      <div className="now-place">
+        <span className={`status ${status}`}>{statusText}</span>
+        <h1 className="place">{place.name}</h1>
+        <p className="meta">
+          {[region, localDate, localTime].filter(Boolean).join(" · ")}
         </p>
       </div>
 
-      <p className="mt-1 flex flex-wrap items-baseline gap-x-4 text-[12.5px] text-muted-strong">
-        {place.admin1 || place.country ? (
-          <span>{[place.admin1, place.country].filter(Boolean).join(", ")}</span>
-        ) : null}
-        <span className="lowercase">{localDate}</span>
-      </p>
-
-      <div className="mt-7 flex items-start gap-4 sm:gap-6">
-        <p className="tnum text-[clamp(4.4rem,16.5vw,6.5rem)] font-normal leading-[0.88] tracking-[-0.045em] text-ink">
-          {formatTemperatureValue(current.temperature, unit)}
-          <span className="relative top-[0.26em] -ml-[0.04em] align-top text-[0.3em] tracking-normal">
-            °
-          </span>
+      <div className="now-reading">
+        <p className="temp">{degrees(current.temperature)}</p>
+        <p className="now-detail">
+          <strong>{condition.label.toLowerCase()}</strong>
+          feels like {degrees(current.apparentTemperature)}, high {degrees(today.max)}, low{" "}
+          {degrees(today.min)}
+          {nowMinutes != null ? <span>{daylightPhase(today, nowMinutes)}</span> : null}
         </p>
-
-        <div className="pt-[0.4em]">
-          <p className="text-[16px] font-bold leading-tight tracking-[-0.012em] text-ink">
-            {condition.label.toLowerCase()}
-          </p>
-          <p className="mt-1.5 flex flex-wrap items-baseline gap-x-3.5 gap-y-1 text-[12.5px]">
-            <Figure
-              label="feels like"
-              value={`${formatTemperatureValue(current.apparentTemperature, unit)}°`}
-            />
-            <Figure label="high" value={`${formatTemperatureValue(today.max, unit)}°`} />
-            <Figure label="low" value={`${formatTemperatureValue(today.min, unit)}°`} />
-          </p>
-        </div>
       </div>
+
+      <p className="lead">{summary}</p>
     </section>
   );
 }

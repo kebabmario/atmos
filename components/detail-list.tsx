@@ -77,21 +77,12 @@ export function DetailList({ current, today, uvIndex, unit }: DetailListProps) {
   ];
 
   return (
-    <dl className="mt-3 grid border-t border-hairline sm:grid-cols-2 sm:gap-x-9">
+    <dl className="readings">
       {rows.map((row) => (
-        <div
-          key={row.label}
-          className="flex items-baseline gap-2 border-b border-hairline py-[9px] text-[13px]"
-        >
-          <dt className="whitespace-nowrap text-muted-strong">{row.label}</dt>
-          <span
-            aria-hidden="true"
-            className="flex-1 -translate-y-[3px] border-b border-dotted border-[rgba(0,0,0,0.26)]"
-          />
-          {row.note ? (
-            <span className="whitespace-nowrap text-[11.5px] text-muted-strong">{row.note}</span>
-          ) : null}
-          <dd className="tnum whitespace-nowrap font-semibold text-ink">{row.value}</dd>
+        <div key={row.label}>
+          <dt>{row.label}</dt>
+          {row.note ? <span className="note">{row.note}</span> : null}
+          <dd>{row.value}</dd>
         </div>
       ))}
     </dl>

@@ -1,35 +1,36 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
-import brandMark from "@/app/icon.png";
-import { CurrentBlock } from "@/components/current-block";
-import { DailyList } from "@/components/daily-list";
-import { DetailList } from "@/components/detail-list";
-import { HourlyChart } from "@/components/hourly-chart";
-import { LocateButton, SearchField, UnitToggle } from "@/components/top-bar";
-import { daySummary } from "@/lib/summary";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { CurrentBlock } from '@/components/current-block';
+import { DailyList } from '@/components/daily-list';
+import { DetailList } from '@/components/detail-list';
+import { HourlyChart } from '@/components/hourly-chart';
+import { LocateButton, SearchField, UnitToggle } from '@/components/top-bar';
+import { daySummary } from '@/lib/summary';
+import { phaseOf, skyOf, themeFor } from '@/lib/theme';
 import {
+  currentMinutes,
   currentUvIndex,
   describeWeather,
+  minutesSinceMidnight,
   formatLocalDate,
   formatLocalTime,
   upcomingHours,
   type Place,
   type TemperatureUnit,
   type WeatherReport,
-} from "@/lib/weather";
+} from '@/lib/weather';
 
-const PLACE_KEY = "weather.place";
-const UNIT_KEY = "weather.unit";
+const PLACE_KEY = 'weather.place';
+const UNIT_KEY = 'weather.unit';
 
 function isPlace(value: unknown): value is Place {
-  if (!value || typeof value !== "object") return false;
+  if (!value || typeof value !== 'object') return false;
   const candidate = value as Place;
   return (
-    typeof candidate.name === "string" &&
-    typeof candidate.latitude === "number" &&
-    typeof candidate.longitude === "number"
+    typeof candidate.name === 'string' &&
+    typeof candidate.latitude === 'number' &&
+    typeof candidate.longitude === 'number'
   );
 }
 
@@ -65,61 +66,68 @@ type WeatherAppProps = {
   defaultUnit: TemperatureUnit;
 };
 
-export function WeatherApp({ initialPlace, initialReport, defaultUnit }: WeatherAppProps) {
+export function WeatherApp({
+  initialPlace,
+  initialReport,
+  defaultUnit,
+}: WeatherAppProps) {
   const [place, setPlace] = useState<Place>(initialPlace);
   const [report, setReport] = useState<WeatherReport | null>(initialReport);
-  
-  // Lazy-initialize unit from localStorage to avoid calling setState inside an effect
-  const [unit, setUnit] = useState<TemperatureUnit>(() => {
-    try {
-      const savedUnit = window.localStorage.getItem(UNIT_KEY);
-      if (savedUnit === "c" || savedUnit === "f") return savedUnit;
-    } catch {
-      // Ignore unreadable storage.
-    }
-    return defaultUnit;
-  });
 
-  const [status, setStatus] = useState<"idle" | "loading" | "error">(
-    initialReport ? "idle" : "loading",
+  // Starts from the server default so hydration matches; the saved unit is restored on mount.
+  const [unit, setUnit] = useState<TemperatureUnit>(defaultUnit);
+
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>(
+    initialReport ? 'idle' : 'loading'
   );
   const [error, setError] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
-  const [, setMinuteTick] = useState(0);
+  // null on the server so the clock never hydrates mismatched
+  const [now, setNow] = useState<number | null>(null);
   const requestRef = useRef(0);
 
   const load = useCallback(async (next: Place) => {
     const requestId = requestRef.current + 1;
     requestRef.current = requestId;
 
-    setStatus("loading");
+    setStatus('loading');
     setError(null);
 
     try {
-      const response = await fetch(`/api/weather?lat=${next.latitude}&lon=${next.longitude}`, {
-        cache: "no-store",
-      });
+      const response = await fetch(
+        `/api/weather?lat=${next.latitude}&lon=${next.longitude}`,
+        {
+          cache: 'no-store',
+        }
+      );
 
-      if (!response.ok) throw new Error("Forecast unavailable");
+      if (!response.ok) throw new Error('Forecast unavailable');
 
       const data = (await response.json()) as WeatherReport;
       if (requestRef.current !== requestId) return;
 
       setReport(data);
       setPlace(next);
-      setStatus("idle");
+      setStatus('idle');
     } catch {
       if (requestRef.current !== requestId) return;
-      setStatus("error");
-      setError("The forecast could not be loaded. Try again in a moment.");
+      setStatus('error');
+      setError('The forecast could not be loaded. Try again in a moment.');
     }
   }, []);
 
   useEffect(() => {
     const saved = readStoredPlace();
-    
+    let savedUnit: string | null = null;
+    try {
+      savedUnit = window.localStorage.getItem(UNIT_KEY);
+    } catch {
+      // Ignore unreadable storage.
+    }
+
     // Defer the async state-updating loader out of the synchronous render cycle
     queueMicrotask(() => {
+      if (savedUnit === 'c' || savedUnit === 'f') setUnit(savedUnit);
       if (saved && !samePlace(saved, initialPlace)) {
         void load(saved);
       } else if (!initialReport) {
@@ -131,9 +139,8 @@ export function WeatherApp({ initialPlace, initialReport, defaultUnit }: Weather
   }, []);
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
-      setMinuteTick((tick) => tick + 1);
-    }, 30_000);
+    queueMicrotask(() => setNow(Date.now()));
+    const interval = window.setInterval(() => setNow(Date.now()), 30_000);
 
     return () => window.clearInterval(interval);
   }, []);
@@ -143,7 +150,7 @@ export function WeatherApp({ initialPlace, initialReport, defaultUnit }: Weather
       storePlace(next);
       void load(next);
     },
-    [load],
+    [load]
   );
 
   const handleUnitChange = useCallback((next: TemperatureUnit) => {
@@ -157,8 +164,10 @@ export function WeatherApp({ initialPlace, initialReport, defaultUnit }: Weather
 
   const handleLocate = useCallback(() => {
     if (!navigator.geolocation) {
-      setStatus(report ? "idle" : "error");
-      setError("This browser does not share a location. Search for a city instead.");
+      setStatus(report ? 'idle' : 'error');
+      setError(
+        'This browser does not share a location. Search for a city instead.'
+      );
       return;
     }
 
@@ -168,13 +177,16 @@ export function WeatherApp({ initialPlace, initialReport, defaultUnit }: Weather
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          let next: Place = { name: "My location", latitude, longitude };
+          let next: Place = { name: 'My location', latitude, longitude };
 
           try {
-            const response = await fetch(`/api/locate?lat=${latitude}&lon=${longitude}`);
+            const response = await fetch(
+              `/api/locate?lat=${latitude}&lon=${longitude}`
+            );
             if (response.ok) {
               const data = (await response.json()) as { place?: Place };
-              if (data.place?.name) next = { ...data.place, latitude, longitude };
+              if (data.place?.name)
+                next = { ...data.place, latitude, longitude };
             }
           } catch {
             // Keep the generic label when reverse geocoding is unavailable.
@@ -188,176 +200,186 @@ export function WeatherApp({ initialPlace, initialReport, defaultUnit }: Weather
       },
       () => {
         setLocating(false);
-        setError("Location was not shared. Search for a city instead.");
+        setError('Location was not shared. Search for a city instead.');
       },
-      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
+      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 }
     );
   }, [load, report]);
 
-  const condition = report ? describeWeather(report.current.weatherCode) : null;
   const today = report?.daily[0];
   const uvIndex =
-    report && today ? currentUvIndex(report.hourly, report.current.time, today.uvMax) : 0;
-  const hours = report ? upcomingHours(report.hourly, report.current.time, 24) : [];
-  const localTime = report ? formatLocalTime(report.timezone) : "";
-  const localDate = report ? formatLocalDate(report.timezone) : "";
-  const busy = status === "loading";
+    report && today
+      ? currentUvIndex(report.hourly, report.current.time, today.uvMax)
+      : 0;
+  const hours = report
+    ? upcomingHours(report.hourly, report.current.time, 24)
+    : [];
+  const clockReady = now != null && report != null;
+  const nowMinutes = clockReady ? currentMinutes(report.timezone) : null;
+  const localTime = clockReady
+    ? formatLocalTime(report.timezone).toLowerCase()
+    : '';
+  const localDate = clockReady
+    ? formatLocalDate(report.timezone).toLowerCase()
+    : '';
+  const busy = status === 'loading';
+  const theme =
+    report && today
+      ? themeFor(
+          phaseOf(
+            nowMinutes,
+            minutesSinceMidnight(today.sunrise),
+            minutesSinceMidnight(today.sunset),
+            report.current.isDay
+          ),
+          skyOf(describeWeather(report.current.weatherCode).kind)
+        )
+      : null;
+
+  const paper = theme?.vars["--paper"];
+  useEffect(() => {
+    if (!paper) return;
+    // Overscroll and the mobile browser bar follow the sky too.
+    document.documentElement.style.backgroundColor = paper;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", paper);
+  }, [paper]);
 
   return (
-    <>
-      <div className="relative z-10 mx-auto w-full max-w-[640px] px-[18px] pb-16 sm:px-7">
-        <header className="flex flex-wrap items-baseline gap-x-5 gap-y-3 pt-6">
-          <span className="order-1 mr-auto inline-flex items-center gap-[7px]">
-            <Image
-              src={brandMark}
-              alt=""
-              aria-hidden="true"
-              priority
-              width={24}
-              height={24}
-              sizes="24px"
-              className="h-[24px] w-[24px] shrink-0"
-            />
-            <span className="text-[13px] font-bold tracking-[-0.01em] text-ink">atmos</span>
-          </span>
-          <UnitToggle unit={unit} onChange={handleUnitChange} className="order-2 sm:order-4" />
-          <span className="order-3 h-0 w-full basis-full sm:hidden" aria-hidden="true" />
-          <SearchField
-            onSelect={handleSelect}
-            className="order-4 w-[168px] sm:order-2 sm:w-[150px]"
-          />
-          <LocateButton
-            onClick={handleLocate}
-            busy={locating}
-            className="order-5 ml-auto sm:order-3 sm:ml-0"
-          />
+    <div className="sky" style={theme?.vars as React.CSSProperties | undefined}>
+      <div className="page">
+        <header className="top">
+          <p className="name">atmos</p>
+          <div className="controls">
+            <SearchField onSelect={handleSelect} />
+            <LocateButton onClick={handleLocate} busy={locating} />
+            <UnitToggle unit={unit} onChange={handleUnitChange} />
+          </div>
         </header>
 
-        <main
-          aria-busy={busy}
-          className={`transition-opacity duration-200 ${busy && report ? "opacity-55" : ""}`}
-        >
-          {report && condition && today ? (
-            <>
+        <main aria-busy={busy} className="flex flex-1 flex-col">
+          {report && today ? (
+            <div className="dim">
               <CurrentBlock
                 place={place}
                 current={report.current}
                 today={today}
                 unit={unit}
+                summary={daySummary({
+                  current: report.current,
+                  hours,
+                  today,
+                  unit,
+                })}
+                status={status}
                 localTime={localTime}
                 localDate={localDate}
-                status={status}
+                nowMinutes={nowMinutes}
               />
 
-              <p className="mt-6 max-w-[52ch] text-[15px] leading-[1.8] text-muted-strong">
-                {daySummary({ current: report.current, hours, today, unit })}
-              </p>
-
-              <section aria-labelledby="hourly-heading" className="mt-9 border-t border-hairline pt-5">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                  <h2
-                    id="hourly-heading"
-                    className="text-[13px] font-bold tracking-[-0.01em] text-ink"
-                  >
+              <section aria-labelledby="hourly-heading" className="hourly">
+                <div className="list-head">
+                  <h2 id="hourly-heading" className="list-title">
                     the next 24 hours
                   </h2>
-                  <p className="text-[11.5px] text-muted">bars are the chance of rain</p>
-                </div>
-                <div className="mt-3">
-                  <HourlyChart hours={hours} unit={unit} />
-                </div>
-              </section>
-
-              <section aria-labelledby="daily-heading" className="mt-9">
-                <h2
-                  id="daily-heading"
-                  className="text-[13px] font-bold tracking-[-0.01em] text-ink"
-                >
-                  ten days
-                </h2>
-                <DailyList
-                  days={report.daily}
-                  currentTemperature={report.current.temperature}
-                  unit={unit}
-                />
-              </section>
-
-              <section aria-labelledby="details-heading" className="mt-9">
-                <h2
-                  id="details-heading"
-                  className="text-[13px] font-bold tracking-[-0.01em] text-ink"
-                >
-                  right now
-                </h2>
-                <DetailList
-                  current={report.current}
-                  today={today}
-                  uvIndex={uvIndex}
-                  unit={unit}
-                />
-              </section>
-
-              <footer className="mt-5 text-[11.5px] leading-[1.7] text-muted">
-                <p>
-                  Forecast from{" "}
-                  <a
-                    href="https://open-meteo.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-link hover:underline"
-                  >
-                    open-meteo
-                  </a>
-                  . Times are local to {place.name}
-                  {report.timezoneAbbreviation ? ` (${report.timezoneAbbreviation})` : ""}.
-                </p>
-              </footer>
-            </>
-          ) : (
-            <section className="flex min-h-[48vh] flex-col justify-center gap-3">
-              {status === "error" ? (
-                <>
-                  <p className="max-w-[40ch] text-[13.5px] leading-[1.7] text-muted-strong">
-                    {error}
+                  <p className="list-note">
+                    bars are the chance of rain, night is shaded
                   </p>
+                </div>
+                <HourlyChart hours={hours} unit={unit} />
+              </section>
+
+              <div className="cols">
+                <section aria-labelledby="daily-heading">
+                  <h2 id="daily-heading" className="list-title list-head">
+                    ten days
+                  </h2>
+                  <DailyList
+                    days={report.daily}
+                    currentTemperature={report.current.temperature}
+                    unit={unit}
+                  />
+                </section>
+
+                <section aria-labelledby="details-heading">
+                  <h2 id="details-heading" className="list-title list-head">
+                    right now
+                  </h2>
+                  <DetailList
+                    current={report.current}
+                    today={today}
+                    uvIndex={uvIndex}
+                    unit={unit}
+                  />
+                  <p className="credit">
+                    forecast from{' '}
+                    <a
+                      href="https://open-meteo.com"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open-Meteo
+                    </a>
+                    , times local to {place.name}
+                    {report.timezoneAbbreviation
+                      ? ` (${report.timezoneAbbreviation})`
+                      : ''}
+                    {theme
+                      ? `. colors follow the sky there: ${theme.phase}, ${theme.sky === 'partly' ? 'partly cloudy' : theme.sky}`
+                      : ''}
+                  </p>
+                </section>
+              </div>
+            </div>
+          ) : (
+            <section className="state">
+              {status === 'error' ? (
+                <>
+                  <p className="note-state">{error}</p>
                   <button
                     type="button"
                     onClick={() => void load(place)}
-                    className="self-start border-b border-ink pb-0.5 text-[13px] text-ink"
+                    className="retry"
                   >
                     try again
                   </button>
                 </>
               ) : (
-                <p
-                  className="text-[13px] text-muted transition-opacity"
-                  role="status"
-                >
+                <p className="note-state" role="status">
                   loading the forecast…
                 </p>
               )}
             </section>
           )}
         </main>
-      </div>
 
-      {error && report ? (
-        <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
-          <div
-            role="status"
-            className="flex items-center gap-4 rounded-[10px] border border-hairline bg-surface py-2 pl-3.5 pr-2 shadow-[0_18px_32px_-24px_rgba(0,0,0,0.5)]"
-          >
-            <span className="text-[12.5px] text-ink">{error}</span>
-            <button
-              type="button"
-              onClick={() => setError(null)}
-              className="text-[12.5px] text-muted transition-colors hover:text-ink"
-            >
+        <footer className="foot">
+          <ul>
+            <li>
+              <a href="https://kebabmario.dev" target="_blank" rel="noreferrer">
+                made by myrixx
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/kebabmario/atmos"
+                target="_blank"
+                rel="noreferrer"
+              >
+                github
+              </a>
+            </li>
+          </ul>
+        </footer>
+
+        {error && report ? (
+          <div role="status" className="toast">
+            <span>{error}</span>
+            <button type="button" onClick={() => setError(null)}>
               dismiss
             </button>
           </div>
-        </div>
-      ) : null}
-    </>
+        ) : null}
+      </div>
+    </div>
   );
 }
