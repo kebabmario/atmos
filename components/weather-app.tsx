@@ -5,6 +5,8 @@ import { CurrentBlock } from '@/components/current-block';
 import { DailyList } from '@/components/daily-list';
 import { DetailList } from '@/components/detail-list';
 import { HourlyChart } from '@/components/hourly-chart';
+import { Logo } from '@/components/logo';
+import { SkyCanvas } from '@/components/sky-canvas';
 import { LocateButton, SearchField, UnitToggle } from '@/components/top-bar';
 import { daySummary } from '@/lib/summary';
 import { phaseOf, skyOf, themeFor } from '@/lib/theme';
@@ -246,9 +248,25 @@ export function WeatherApp({
 
   return (
     <div className="sky" style={theme?.vars as React.CSSProperties | undefined}>
+      {report && theme ? (
+        <SkyCanvas
+          latitude={place.latitude}
+          longitude={place.longitude}
+          cloudCover={report.current.cloudCover}
+          sky={theme.sky}
+          windSpeed={report.current.windSpeed}
+          windDirection={report.current.windDirection}
+          dark={theme.dark}
+          condition={describeWeather(report.current.weatherCode).kind}
+          precipitation={report.current.precipitation}
+        />
+      ) : null}
       <div className="page">
         <header className="top">
-          <p className="name">atmos</p>
+          <p className="name">
+          atmos
+          <Logo />
+        </p>
           <div className="controls">
             <SearchField onSelect={handleSelect} />
             <LocateButton onClick={handleLocate} busy={locating} />

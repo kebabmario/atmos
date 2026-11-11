@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <style>.c{stroke:#0f1a29}@media (prefers-color-scheme:dark){.c{stroke:#e8ecf6}}</style>
+  <mask id="m">
+    <rect width="24" height="24" fill="#fff"/>
+    <path d="M7.5 19A3.5 3.5 0 0 1 7.8 12A5 5 0 0 1 17.8 12.2A3.4 3.4 0 0 1 17.8 19Z" fill="#000" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+  </mask>
+  <circle cx="17" cy="7.4" r="4.4" fill="#f2b75e" mask="url(#m)"/>
+  <path class="c" d="M7.5 19A3.5 3.5 0 0 1 7.8 12A5 5 0 0 1 17.8 12.2A3.4 3.4 0 0 1 17.8 19Z" fill="none" stroke-width="1.8" stroke-linejoin="round"/>
+</svg>

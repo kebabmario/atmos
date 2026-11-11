@@ -10,9 +10,10 @@ export type Sky = "clear" | "partly" | "cloud" | "rain" | "snow" | "storm";
 const TWILIGHT_MINUTES = 45;
 
 const PHASES: Record<Phase, { paper: string; ink: string; dark: boolean; sun: string }> = {
-  dawn: { paper: "#f8e9e1", ink: "#2b1e1f", dark: false, sun: "#b5481f" },
+  // dawn and dusk are blue hour: the sky is dim, so text goes light
+  dawn: { paper: "#151c30", ink: "#ecf0f7", dark: true, sun: "#f4a8a0" },
   day: { paper: "#e5eff9", ink: "#0f1a29", dark: false, sun: "#9a5a07" },
-  dusk: { paper: "#f4e1cc", ink: "#2a1c11", dark: false, sun: "#a2470f" },
+  dusk: { paper: "#141829", ink: "#ecf0f7", dark: true, sun: "#f2a65a" },
   night: { paper: "#0b1020", ink: "#e8ecf6", dark: true, sun: "#f2b75e" },
 };
 
@@ -113,12 +114,13 @@ export function themeFor(phase: Phase, sky: Sky): Theme {
       "--raised": mix(paper, ink, base.dark ? 0.1 : 0.07),
       "--night": base.dark ? mix(paper, "#000000", 0.45) : mix(paper, ink, 0.07),
       "--ink": ink,
-      "--muted": readable(mix(ink, paper, 0.45), paper, ink),
+      // light themes sit over bright cloud, so their muted text stays darker
+      "--muted": readable(mix(ink, paper, base.dark ? 0.45 : 0.22), paper, ink),
       "--line": alpha(ink, base.dark ? 0.1 : 0.12),
       "--tick": alpha(ink, 0.3),
       "--rain": readable(base.dark ? RAIN.dark : RAIN.light, paper, ink),
       "--sun": base.sun,
-      "--sun-ink": readable(base.sun, paper, ink),
+      "--sun-ink": readable(base.dark ? base.sun : mix(base.sun, ink, 0.45), paper, ink),
       "--live": base.dark ? "#4cc38a" : "#2f8a4c",
       "--pending": base.dark ? "#f0b45a" : "#b8740f",
       "--offline": alpha(ink, 0.35),
@@ -129,3 +131,33 @@ export function themeFor(phase: Phase, sky: Sky): Theme {
 
 export const PHASE_LIST = Object.keys(PHASES) as Phase[];
 export const SKY_LIST = Object.keys(SKIES) as Sky[];
+
+/** Sun elevation and azimuth (radians, azimuth clockwise from north) for a place and moment. */
+export function sunPosition(date: Date, latitude: number, longitude: number) {
+  const rad = Math.PI / 180;
+  const days = date.getTime() / 86_400_000 - 10_957.5; // since J2000.0
+  const anomaly = (357.529 + 0.98560028 * days) * rad;
+  const meanLongitude = 280.459 + 0.98564736 * days;
+  const eclipticLongitude =
+    (meanLongitude + 1.915 * Math.sin(anomaly) + 0.02 * Math.sin(2 * anomaly)) * rad;
+  const obliquity = (23.439 - 0.00000036 * days) * rad;
+  const rightAscension = Math.atan2(
+    Math.cos(obliquity) * Math.sin(eclipticLongitude),
+    Math.cos(eclipticLongitude),
+  );
+  const declination = Math.asin(Math.sin(obliquity) * Math.sin(eclipticLongitude));
+  const siderealHours = (18.697374558 + 24.06570982441908 * days) % 24;
+  const hourAngle = (siderealHours * 15 + longitude) * rad - rightAscension;
+  const lat = latitude * rad;
+
+  const elevation = Math.asin(
+    Math.sin(lat) * Math.sin(declination) +
+      Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle),
+  );
+  const azimuth =
+    Math.atan2(
+      -Math.sin(hourAngle),
+      Math.tan(declination) * Math.cos(lat) - Math.sin(lat) * Math.cos(hourAngle),
+    ) + Math.PI * 2;
+  return { elevation, azimuth: azimuth % (Math.PI * 2) };
+}

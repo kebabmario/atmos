@@ -44,6 +44,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 strong, b { font-weight: 650; }
 
 /* --- FRAME --------------------------------------------------------- */
+/* Live sky behind the top of the page; it dissolves into the paper below. */
+.sky-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100lvh;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, rgba(0, 0, 0, .55) 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 58%, rgba(0, 0, 0, .55) 82%, transparent 100%);
+}
+
+/* Over the sky, secondary text sits close to the main colour so it reads without any glow. */
+.top, .now { --muted: color-mix(in srgb, var(--ink) 88%, var(--paper)); }
+.top .control { color: var(--ink); } /* the header sits on the darkest part of the sky */
 /* Full-bleed layer that carries the sky colors from lib/theme.ts. */
 .sky {
   min-height: 100dvh;
@@ -52,6 +67,8 @@ strong, b { font-weight: 650; }
   transition: background-color .8s, color .8s;
 }
 .page {
+  position: relative;
+  z-index: 1;
   min-height: 100dvh;
   max-width: 1200px;
   margin: 0 auto;
@@ -70,7 +87,7 @@ strong, b { font-weight: 650; }
   border-bottom: 1px solid var(--line);
   font-size: 14px;
 }
-.name { font-size: 18px; font-weight: 650; letter-spacing: -.02em; line-height: 1; }
+.name { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 650; letter-spacing: -.02em; line-height: 1; }
 .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
 .control { padding: 0; color: var(--muted); transition: color .15s; }
 .control:hover { color: var(--ink); }
@@ -218,7 +235,7 @@ main[aria-busy="true"] .dim { opacity: .55; }
 .chart { overflow-x: auto; scrollbar-width: none; }
 .chart::-webkit-scrollbar { display: none; }
 .chart svg { display: block; }
-.chart-night { fill: var(--night); }
+.chart-night { fill: var(--night); opacity: .6; } /* see the sky through the night band */
 .chart-turn { font-size: 12px; fill: var(--muted); }
 .chart-grid { stroke: var(--line); stroke-width: 1; shape-rendering: crispEdges; }
 .chart-axis { font-size: 12px; fill: var(--muted); }
